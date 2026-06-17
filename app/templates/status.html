@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}IT Brief - 수집상태{% endblock %}
+
+{% block content %}
+<section class="page-title">
+  <p class="eyebrow">Pipeline Status</p>
+  <h1>수집 상태</h1>
+  <span></span>
+</section>
+
+<section class="status-layout">
+  <aside class="brief-panel">
+    <h2>{{ latest_job.status if latest_job else "idle" }}</h2>
+    <p>{{ latest_job.message if latest_job else "수집 작업이 없습니다." }}</p>
+    <dl>
+      <div><dt>기사</dt><dd>{{ total_articles }}</dd></div>
+      <div><dt>성공</dt><dd>{{ latest_job.success_count if latest_job else 0 }}</dd></div>
+      <div><dt>실패</dt><dd>{{ latest_job.failed_count if latest_job else 0 }}</dd></div>
+    </dl>
+  </aside>
+  <div class="job-timeline">
+    {% if latest_job %}
+      {% for stage, state in latest_job.stages.items() %}
+        <div class="timeline-item state-{{ state }}">
+          <span></span>
+          <strong>{{ stage }}</strong>
+          <em>{{ state }}</em>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+

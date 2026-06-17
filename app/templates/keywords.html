@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% from "macros.html" import article_teaser %}
+
+{% block title %}IT Brief - 키워드{% endblock %}
+
+{% block content %}
+<section class="page-title">
+  <p class="eyebrow">Keyword Signals</p>
+  <h1>키워드 분석</h1>
+  <span></span>
+</section>
+
+<section class="analysis-page">
+  <aside>
+    <p class="eyebrow">Top Keywords</p>
+    <div class="keyword-cloud large">
+      {% for keyword, count in keywords %}
+        <a class="keyword-highlight" href="/keywords?keyword={{ keyword }}">{{ keyword }} <small>{{ count }}</small></a>
+      {% endfor %}
+    </div>
+  </aside>
+  <div>
+    <p class="result-line">{{ selected_keyword or "전체" }} 관련 기사 {{ articles|length }}개</p>
+    <div class="compact-list">
+      {% for article in articles[:12] %}
+        {{ article_teaser(article, "brief") }}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+

@@ -1,0 +1,78 @@
+{% macro source_profile(article) %}
+  <span class="source-profile">
+    {% if article.source_profile_image_url %}
+      <img src="{{ article.source_profile_image_url }}" alt="{{ article.source_name }} 로고">
+    {% else %}
+      <span class="source-fallback">{{ article.source_name[:1] }}</span>
+    {% endif %}
+    <span>
+      <strong>{{ article.source_name }}</strong>
+      <small>{{ article.author_name or "편집팀" }}</small>
+    </span>
+  </span>
+{% endmacro %}
+
+{% macro sentiment_label(article) %}
+  <span class="sentiment sentiment-{{ article.sentiment_label }}">{{ article.sentiment_label }} {{ article.sentiment_score }}</span>
+{% endmacro %}
+
+{% macro keyword_list(article) %}
+  <span class="keyword-row">
+    {% for keyword in article.keywords[:4] %}
+      <a class="keyword-highlight" href="/news?keyword={{ keyword }}">{{ keyword }}</a>
+    {% endfor %}
+  </span>
+{% endmacro %}
+
+{% macro article_teaser(article, slot_type="brief") %}
+  <article class="editorial-slot slot-{{ slot_type }}">
+    {% if article.image_url and slot_type in ["hero", "feature"] %}
+      <a href="/article/{{ article.id }}" class="article-image">
+        <img src="{{ article.image_url }}" alt="{{ article.image_alt or article.title }}">
+      </a>
+    {% endif %}
+    <div class="article-meta">
+      <span>{{ article.category }}</span>
+      <span>{{ article.published_at[:10] }}</span>
+      {{ sentiment_label(article) }}
+    </div>
+    <h2><a href="/article/{{ article.id }}">{{ article.title }}</a></h2>
+    {% if slot_type != "brief" %}
+      <p>{{ article.summary_one_line or article.description }}</p>
+    {% endif %}
+    {{ keyword_list(article) }}
+    <div class="analysis-strip">
+      <span>요약</span>
+      <span>키워드 {{ article.keywords|length }}</span>
+      <span>관련 {{ article.related_count }}</span>
+    </div>
+    {{ source_profile(article) }}
+  </article>
+{% endmacro %}
+
+{% macro editorial_grid(slots, page_keywords, page_sentiment) %}
+  <section class="editorial-grid" id="editorial-grid">
+    {% for slot in slots %}
+      {% if slot.type == "related" %}
+        <aside class="editorial-slot slot-related">
+          <p class="eyebrow">Related Brief</p>
+          <h2>같이 볼 기사</h2>
+          <p>대표 기사와 키워드, 감정, 발행 시점이 가까운 기사들을 Chroma 유사도 기준으로 추천합니다.</p>
+        </aside>
+      {% else %}
+        {{ article_teaser(slot.article, slot.type) }}
+      {% endif %}
+    {% endfor %}
+  </section>
+{% endmacro %}
+
+{% macro pagination(current_page, total_pages, base_query="") %}
+  {% if total_pages > 1 %}
+    <nav class="pagination" aria-label="뉴스 페이지">
+      {% for page in range(1, total_pages + 1) %}
+        {% set href = "?page=" ~ page ~ ("&" ~ base_query if base_query else "") %}
+        <a href="{{ href }}#editorial-grid" {% if page == current_page %}aria-current="page"{% endif %}>{{ page }}</a>
+      {% endfor %}
+    </nav>
+  {% endif %}
+{% endmacro %}

@@ -1,0 +1,5 @@
+# Optional Chroma dependencies.
+# If your Python is 3.14 and tokenizers/chromadb wheels are unavailable,
+# use Python 3.11-3.13 for this optional Vector DB layer.
+langchain-chroma==0.2.0
+chromadb==0.5.23

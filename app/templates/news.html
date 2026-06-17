@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% from "macros.html" import editorial_grid, pagination %}
+
+{% block title %}IT Brief - Latest IT Brief{% endblock %}
+
+{% block content %}
+<section class="page-title">
+  <p class="eyebrow">Editorial Grid</p>
+  <h1>Latest IT Brief</h1>
+  <span></span>
+</section>
+
+<div class="issue-toolbar">
+  <p class="result-line">{{ articles|length }}개 기사 중 {{ current_page }} / {{ total_pages }} 페이지</p>
+  {{ pagination(current_page, total_pages, base_query) }}
+</div>
+
+{{ editorial_grid(slots, page_keywords, page_sentiment) }}
+
+<form class="filter-bar bottom-filter" action="/news" method="get">
+  <label>
+    <span>검색</span>
+    <input name="q" value="{{ filters.q }}" placeholder="AI 규제, 클라우드 비용...">
+  </label>
+  <label>
+    <span>카테고리</span>
+    <select name="category">
+      <option value="">전체</option>
+      {% for item in ["AI", "보안", "클라우드", "반도체", "스타트업", "빅테크", "데이터센터", "IT"] %}
+        <option value="{{ item }}" {% if filters.category == item %}selected{% endif %}>{{ item }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>
+    <span>감정</span>
+    <select name="sentiment">
+      <option value="">전체</option>
+      {% for item in ["긍정", "중립", "부정"] %}
+        <option value="{{ item }}" {% if filters.sentiment == item %}selected{% endif %}>{{ item }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>
+    <span>정렬</span>
+    <select name="sort">
+      <option value="published" {% if filters.sort == "published" %}selected{% endif %}>최신순</option>
+      <option value="weight" {% if filters.sort == "weight" %}selected{% endif %}>편집 가중치</option>
+      <option value="sentiment" {% if filters.sort == "sentiment" %}selected{% endif %}>감정 점수</option>
+    </select>
+  </label>
+  {% if filters.keyword %}<input type="hidden" name="keyword" value="{{ filters.keyword }}">{% endif %}
+  <button type="submit">적용</button>
+</form>
+{% endblock %}

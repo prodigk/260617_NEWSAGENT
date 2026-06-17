@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "macros.html" import article_teaser %}
+
+{% block title %}IT Brief - 의미검색{% endblock %}
+
+{% block content %}
+<section class="page-title">
+  <p class="eyebrow">Semantic Search</p>
+  <h1>의미 기반 기사 검색</h1>
+  <span></span>
+</section>
+
+<form class="search-panel" action="/search" method="get">
+  <label for="q">자연어로 관심 이슈를 입력하세요</label>
+  <div>
+    <input id="q" name="q" value="{{ query }}" placeholder="예: AI 규제 관련 뉴스">
+    <button type="submit">검색</button>
+  </div>
+  <p>예시: 삼성 반도체 투자 이슈 / 보안 사고와 개인정보 유출 / 클라우드 비용 절감</p>
+</form>
+
+<section class="compact-list search-results">
+  {% for article, score in results %}
+    <div>
+      {{ article_teaser(article, "brief") }}
+      <small>관련도 {{ "%.2f"|format(score) }}</small>
+    </div>
+  {% else %}
+    <p class="empty-state">검색어를 입력하면 Chroma 또는 로컬 유사도 기준으로 관련 기사를 보여줍니다.</p>
+  {% endfor %}
+</section>
+{% endblock %}
+

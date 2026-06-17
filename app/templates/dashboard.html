@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% from "macros.html" import editorial_grid, pagination %}
+
+{% block title %}IT Brief - Latest IT Brief{% endblock %}
+
+{% block content %}
+<section class="page-title">
+  <p class="eyebrow">News Agent</p>
+  <h1>Latest IT Brief</h1>
+  <span></span>
+</section>
+
+<section class="dashboard-lead">
+  <aside class="brief-panel">
+    <p class="eyebrow">Collection Status</p>
+    <h2>{{ total_articles }}개 기사</h2>
+    <p>{{ latest_job.message if latest_job else "아직 수집 작업이 없습니다." }}</p>
+    <dl>
+      <div><dt>수집</dt><dd>{{ latest_job.collected_count if latest_job else 0 }}</dd></div>
+      <div><dt>성공</dt><dd>{{ latest_job.success_count if latest_job else 0 }}</dd></div>
+      <div><dt>상태</dt><dd>{{ latest_job.status if latest_job else "idle" }}</dd></div>
+    </dl>
+  </aside>
+  {% if articles %}
+    {% set main = articles[0] %}
+    <article class="lead-story">
+      {% if main.image_url %}<img src="{{ main.image_url }}" alt="{{ main.image_alt or main.title }}">{% endif %}
+      <p class="eyebrow">{{ main.category }} / {{ main.source_name }}</p>
+      <h2><a href="/article/{{ main.id }}">{{ main.title }}</a></h2>
+      <p>{{ main.summary_three_lines.replace('\n', ' ') }}</p>
+    </article>
+  {% endif %}
+  <aside class="insight-panel">
+    <p class="eyebrow">Top Keywords</p>
+    <div class="keyword-cloud">
+      {% for keyword, count in global_keywords[:8] %}
+        <a class="keyword-highlight" href="/news?keyword={{ keyword }}">{{ keyword }} <small>{{ count }}</small></a>
+      {% endfor %}
+    </div>
+    <div class="sentiment-bars">
+      {% for label, count in global_sentiment.items() %}
+        <span><b>{{ label }}</b><i style="--w: {{ count * 8 + 8 }}%"></i><em>{{ count }}</em></span>
+      {% endfor %}
+    </div>
+  </aside>
+</section>
+
+{{ editorial_grid(slots, page_keywords, page_sentiment) }}
+{{ pagination(current_page, total_pages) }}
+{% endblock %}
+

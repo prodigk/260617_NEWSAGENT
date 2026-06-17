@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "macros.html" import article_teaser %}
+
+{% block title %}IT Brief - 감정{% endblock %}
+
+{% block content %}
+<section class="page-title">
+  <p class="eyebrow">Sentiment Desk</p>
+  <h1>감정 분석</h1>
+  <span></span>
+</section>
+
+<section class="analysis-page">
+  <aside>
+    <p class="eyebrow">Market Tone</p>
+    <div class="sentiment-bars tall">
+      {% for label, count in sentiment.items() %}
+        <span><b>{{ label }}</b><i style="--w: {{ count * 8 + 8 }}%"></i><em>{{ count }}</em></span>
+      {% endfor %}
+    </div>
+    <p class="muted">색상은 보조 정보이며, 라벨과 점수를 함께 확인하세요.</p>
+  </aside>
+  <div>
+    <p class="eyebrow">Representative Articles</p>
+    <div class="compact-list">
+      {% for article in articles[:12] %}
+        {{ article_teaser(article, "brief") }}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+

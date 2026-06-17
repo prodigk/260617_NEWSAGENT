@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% from "macros.html" import keyword_list, sentiment_label, source_profile %}
+
+{% block title %}{{ article.title }} - IT Brief{% endblock %}
+
+{% block content %}
+<article class="article-detail">
+  <header class="article-hero">
+    <p class="eyebrow">{{ article.category }} / {{ article.published_at[:10] }}</p>
+    <h1>{{ article.title }}</h1>
+    <div class="detail-meta">
+      {{ source_profile(article) }}
+      <a class="origin-link" href="{{ article.url }}" target="_blank" rel="noreferrer">원문 보기</a>
+    </div>
+  </header>
+  <section class="detail-layout">
+    <div class="detail-main">
+      {% if article.image_url %}<img class="detail-image" src="{{ article.image_url }}" alt="{{ article.image_alt or article.title }}">{% endif %}
+      <section>
+        <p class="eyebrow">One Line Summary</p>
+        <h2><mark>{{ article.summary_one_line }}</mark></h2>
+      </section>
+      <section>
+        <p class="eyebrow">Three Line Brief</p>
+        {% for line in article.summary_three_lines.split('\n') %}
+          <p>{{ line }}</p>
+        {% endfor %}
+      </section>
+      <section>
+        <p class="eyebrow">Why It Matters</p>
+        <p>{{ article.why_it_matters }}</p>
+      </section>
+      <section>
+        <p class="eyebrow">Original Extract</p>
+        <p>{{ article.content_text[:900] or article.description }}</p>
+        <small>본문 추출 상태: {{ article.extraction_status }}</small>
+      </section>
+    </div>
+    <aside class="detail-side">
+      <section>
+        <p class="eyebrow">Keywords</p>
+        {{ keyword_list(article) }}
+      </section>
+      <section>
+        <p class="eyebrow">Sentiment</p>
+        {{ sentiment_label(article) }}
+        <p class="muted">감정 분석은 기사 논조와 시장 반응 신호를 보조적으로 해석한 값입니다.</p>
+      </section>
+      <section>
+        <p class="eyebrow">Follow Up</p>
+        <p>{{ article.follow_up_points }}</p>
+      </section>
+      <section>
+        <p class="eyebrow">Related Articles</p>
+        <div class="related-list">
+          {% for item in related %}
+            <a href="/article/{{ item.article_id }}">
+              <strong>{{ item.title }}</strong>
+              <span>{{ item.reason }}</span>
+            </a>
+          {% else %}
+            <p>추천 기사가 아직 없습니다.</p>
+          {% endfor %}
+        </div>
+      </section>
+    </aside>
+  </section>
+</article>
+{% endblock %}
+
