@@ -50,8 +50,22 @@ def template_context(request: Request, **extra):
 
 
 @app.get("/", response_class=HTMLResponse)
-def dashboard(request: Request):
-    return news(request, page=1, q="", category="", sentiment="", keyword="", sort="published")
+def dashboard(request: Request, page: int = Query(1, ge=1)):
+    articles = list_articles(sort="published")
+    page_articles, current_page, total_pages = paginate_articles(articles, page)
+    return templates.TemplateResponse(
+        "dashboard.html",
+        template_context(
+            request,
+            articles=articles,
+            page_articles=page_articles,
+            slots=build_slots(page_articles),
+            page_keywords=page_keywords(page_articles),
+            page_sentiment=sentiment_summary(page_articles),
+            current_page=current_page,
+            total_pages=total_pages,
+        ),
+    )
 
 
 @app.get("/news", response_class=HTMLResponse)

@@ -13,9 +13,19 @@
 <section class="analysis-page">
   <aside>
     <p class="eyebrow">Market Tone</p>
-    <div class="sentiment-bars tall">
+    {% set total_sentiment = sentiment.values() | sum %}
+    <div class="sentiment-chart" aria-label="긍정 중립 부정 감정 분포">
       {% for label, count in sentiment.items() %}
-        <span><b>{{ label }}</b><i style="--w: {{ count * 8 + 8 }}%"></i><em>{{ count }}</em></span>
+        {% set percent = (count / total_sentiment * 100) if total_sentiment else 0 %}
+        <div class="sentiment-chart-row sentiment-chart-{{ label }}">
+          <div class="sentiment-chart-label">
+            <strong>{{ label }}</strong>
+            <span>{{ count }}건 · {{ "%.0f"|format(percent) }}%</span>
+          </div>
+          <div class="sentiment-chart-track" role="img" aria-label="{{ label }} {{ count }}건 {{ "%.0f"|format(percent) }}%">
+            <span style="--w: {{ percent }}%"></span>
+          </div>
+        </div>
       {% endfor %}
     </div>
     <p class="muted">색상은 보조 정보이며, 라벨과 점수를 함께 확인하세요.</p>
@@ -30,4 +40,3 @@
   </div>
 </section>
 {% endblock %}
-
